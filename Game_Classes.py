@@ -80,7 +80,7 @@ class Player(object):
         for w in self.weapons:
             # w.x,w.y = self.x+45, self.y
             w.x = self.x + int(45*np.cos(w.angle/180*np.pi))
-            w.y= self.y + int(45*np.sin(w.angle/180*np.pi))
+            w.y= self.y + int(45*np.sin((w.angle-15)/180*np.pi))
             self.win.blit(w.gun_skin, (w.x, w.y))
 
     def move_w(self,sign=1):
@@ -129,6 +129,8 @@ class Gun(object):
         self.y = -10
         self.bullet_x,self.bullet_y = 0, 0
         self.bullet_distance = 0
+        self.rotateCooldown = 1# 3 loops
+        self.rotateCounter = 0
         self.win = win
         sc_w, sc_h = 1920, 1080
         scalingFactor = sc_h / sc_w
@@ -142,28 +144,35 @@ class Gun(object):
         self.fire_speed = fire_speed
 
     def rotate(self, angle = 0):
-        im = Image.open(self.imageFileName)
-        self.angle += angle
-        if self.angle < 0 :
-            self.angle +=360
-        self.angle = np.mod(self.angle, 360)
-        x0,y0 = im.size[0]//2,im.size[1]//2
-        im_rotate = im.rotate(-self.angle, center=(x0,y0),
-         expand=False)
-        x1, y1 = im.size[0]//2,im.size[1]//2
-        im_rotate = im_rotate.crop((x1-x0, y1-y1, x1+x0, y1+y0))
-        # if abs(self.angle) < 270:
-        #     im_rotate = ImageOps.flip(im_rotate)
-        #     print('flip', self.angle)
-        im_fn = self.imageFileName.split('.png')[0]+"rotated.png"
-        im_rotate.save(im_fn)
-        skin = pygame.image.load(im_fn)
-        self.gun_skin = pygame.transform.scale(skin, (200,int(200*self.scalingFactor)))
+        if self.rotateCounter > self.rotateCooldown:
+            self.rotateCounter = 0
+            im = Image.open(self.imageFileName)
+            self.angle += angle
+            if self.angle < 0 :
+                self.angle +=360
+            self.angle = np.mod(self.angle, 360)
+            if self.angle > 90 and self.angle <270:
+                im = ImageOps.flip(im)
+            x0,y0 = im.size[0]//2,im.size[1]//2
+            im_rotate = im.rotate(-self.angle, center=(x0,y0),
+            expand=False)
+            x1, y1 = im.size[0]//2,im.size[1]//2
+            im_rotate = im_rotate.crop((x1-x0, y1-y1, x1+x0, y1+y0))
 
+            im_fn = self.imageFileName.split('.png')[0]+"rotated.png"
+            im_rotate.save(im_fn)
+            skin = pygame.image.load(im_fn)
+            self.gun_skin = pygame.transform.scale(skin, (200,int(200*self.scalingFactor)))
+        else:
+            self.rotateCounter +=1
 
     def shoot(self):
         if self.ammo_amount >0:
-            self.bullet_x,self.bullet_y = self.x, self.y
+            # dx = int(5*np.cos(self.angle/180*np.pi+np.pi/2))
+            # dy = int(5*np.sin(self.angle/180*np.pi+np.pi/2))
+            self.bullet_x = self.x
+            self.bullet_y = self.y
+
             self.bullet_distance = 0
             self.draw_bullet()
             # self.ammo_amount-=1
