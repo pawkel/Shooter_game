@@ -79,7 +79,7 @@ class Gun(object):
                 return 1
             else:
                 bullet.bullet_distance = 1
-                print(f'hello,speed')
+                print(f'hello,speed{bullet.bullet_distance}')
                 bullet.draw_bullet()
                 return 0
             
