@@ -48,8 +48,6 @@ class Gun(object):
         self.damage = dam
         self.x = -10
         self.y = -10
-        self.rotateCooldown = 1# 3 loops
-        self.rotateCounter = 0
         self.win = win
         self.angle = 0
         self.imageFileName = skin
@@ -60,28 +58,6 @@ class Gun(object):
         self.counter = 0
         self.bullets = pygame.sprite.Group()
 
-    def rotate(self, angle = 0):
-        if self.rotateCounter > self.rotateCooldown:
-            self.rotateCounter = 0
-            im = Image.open(self.imageFileName)
-            self.angle += angle
-            if self.angle < 0 :
-                self.angle +=360
-            self.angle = np.mod(self.angle, 360)
-            if self.angle > 90 and self.angle <270:
-                im = ImageOps.flip(im)
-            x0,y0 = im.size[0]//2,im.size[1]//2
-            im_rotate = im.rotate(-self.angle, center=(x0,y0),
-            expand=False)
-            x1, y1 = im.size[0]//2,im.size[1]//2
-            im_rotate = im_rotate.crop((x1-x0, y1-y1, x1+x0, y1+y0))
-            im_fn = self.imageFileName.split('.png')[0]+"rotated.png"
-            im_rotate.save(im_fn)
-            skin = pygame.image.load(im_fn)
-            self.image = pygame.transform.scale(skin, (20,20))
-        else:
-            self.rotateCounter +=1
-
     def shoot(self):
         if self.ammo_amount >0:
             self.counter = 0
@@ -89,21 +65,25 @@ class Gun(object):
             bullet_y = self.y
             self.bullets.add(Bullet(self.win,self.bulletLook, bullet_x, bullet_y))
             # self.ammo_amount-=1
+            print(self.bullets)
     def updateGameloop(self):
         for bullet in self.bullets:       
-            bullet.bullet_distance +=1
-            dx = int(bullet.bullet_distance*np.cos(self.angle/180*np.pi))
-            dy = int(bullet.bullet_distance*np.sin(self.angle/180*np.pi))
+            bullet.bullet_distance +=0.1
+            dx = int(bullet.bullet_distance)
             bullet.bullet_x +=dx
-            bullet.bullet_y +=dy
             bullet.rect.left, bullet.rect.top= bullet.bullet_x,  bullet.bullet_y
-            if bullet.bullet_x > self.win.get_width() or bullet.bullet_y > self.win.get_height() \
+            if bullet.bullet_x > 800 or bullet.bullet_y > 800 \
                 or bullet.bullet_x <0  or bullet.bullet_y <0:
                 bullet.kill()
+                self.bullets.remove(bullet)
                 return 1
             else:
+                bullet.bullet_distance = 1
+                print(f'hello,speed')
                 bullet.draw_bullet()
                 return 0
+            
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, win, bulletLook, bX, bY):

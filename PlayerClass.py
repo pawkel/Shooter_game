@@ -54,12 +54,10 @@ class Player(pygame.sprite.Sprite):
     def controlOptions(self):
         if self.id == 1:
             self.controls= {'Up': pygame.K_w,'Left':pygame.K_a,\
-                'Right':pygame.K_d,'Down':pygame.K_s,'Shoot':pygame.K_SPACE,'RotateRight':pygame.K_e\
-                    ,'RotateLeft':pygame.K_q}
+                'Right':pygame.K_d,'Down':pygame.K_s,'Shoot':pygame.K_SPACE}
         else:
             self.controls = {'Up': pygame.K_KP8,'Left':pygame.K_KP4,\
-                'Right':pygame.K_KP6,'Down':pygame.K_KP5,'Shoot':pygame.K_KP_ENTER,'RotateRight':pygame.K_KP9\
-                    ,'RotateLeft':pygame.K_KP7}
+                'Right':pygame.K_KP6,'Down':pygame.K_KP5,'Shoot':pygame.K_KP_ENTER}
 
     def update(self,keys, isShoot):
         if keys[self.controls['Up']]:
@@ -72,12 +70,6 @@ class Player(pygame.sprite.Sprite):
             self.move_w(1)
         elif isShoot:
             self.fight()
-        elif keys[self.controls['RotateRight']]:
-            for w in self.weapons:
-                 w.rotate(5)
-        elif keys[self.controls['RotateLeft']]:
-            for w in self.weapons:
-                 w.rotate(-5)
         self.updatePlayerStatus()
         self.updateWeapons()
         self.updateWeaponStatus()
@@ -96,8 +88,8 @@ class Player(pygame.sprite.Sprite):
     def updateWeapons(self):
         for w in self.weapons:
             # w.x,w.y = self.x+45, self.y
-            w.x = self.x + int(45*np.cos(w.angle/180*np.pi))
-            w.y= self.y + int(45*np.sin((w.angle-15)/180*np.pi))
+            w.x = self.x
+            w.y = self.y
             self.win.blit(w.image, (w.x, w.y))
 
     def move_w(self,sign=1):

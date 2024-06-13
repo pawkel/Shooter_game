@@ -10,8 +10,8 @@ win = pygame.display.set_mode((screen_width, screen_hight))
 pygame.display.set_caption("Shooter game")
 clock = pygame.time.Clock()
 run = True
-player1 = Player(win, screen_width, screen_hight, 1,name='Mlk99')
-player2 = Player(win, screen_width, screen_hight, 2,name='Pawkel')
+player1 = Player(win, screen_width, screen_hight, 1,name='Pawkel')
+player2 = Player(win, screen_width, screen_hight, 2,name='Mlk99')
 game = Game(win, player1, player2, screen_width, screen_hight)
 game.spawnWave()
 
@@ -50,4 +50,5 @@ while run:
         game.spawnWave()
     pygame.display.update()
     clock.tick(40)
+
 pygame.quit()

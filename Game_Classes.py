@@ -61,7 +61,7 @@ class Game():
                         if e.health <=0: ## if it dies
                             player.score += e.score ## add this enemey's score to player's score 
                     usedBullets.append(bullets.sprites()[idx])
-            bullets.remove(usedBullets) ## kill the bullets that hit a monster
+            bullets.remove(*usedBullets) ## kill the bullets that hit a monster
         return hit_list
 
     def update_enemys(self):
